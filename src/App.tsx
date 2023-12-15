@@ -21,7 +21,6 @@ function App() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //新しいTODO
     const newTodo: Todo = {
       inputValue: inputValue,
       id: todos.length,
@@ -30,51 +29,71 @@ function App() {
 
     setTodos([newTodo, ...todos]);
     setInputValue("");
-
-    const handleEdit = (id: number, inputValue: string) => {
-      const newTodos = todos.map((todo) => {
-        if (todo.id === id) {
-          todo.inputValue = inputValue;
-        }
-        return todo;
-      });
-      setTodos(newTodos);
-    };
-    return (
-      <div className="App">
-        <div>
-          <h2>TODO</h2>
-          <form
-            onSubmit={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            <input
-              type="text"
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              className="inputText"
-            />
-            <input type="submit" value="作成" className="submitButton" />
-          </form>
-          <ul>
-            {todos.map((todo) => (
-              <li key={todo.id}>
-                {todo.inputValue}
-                <input
-                  type="text"
-                  onChange={(e) => handleEdit(todo.id, e.target.value)}
-                  className="inputText"
-                  value={todo.inputValue}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
   };
+
+  const handleEdit = (id: number, inputValue: string) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.inputValue = inputValue;
+      }
+      return todo;
+    });
+    setTodos(newTodos);
+  };
+
+  const handleChecked = (id: number, checked: boolean) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.checked = !checked;
+      }
+      return todo;
+    });
+  };
+
+  const handleDelete = (id: number) => {
+    const newTodos = todos.filter((todo) => todo.id !== id);
+  };
+
+  return (
+    <div className="App">
+      <div>
+        <h2>TODO</h2>
+        <form
+          onSubmit={(e) => {
+            handleSubmit(e);
+          }}
+        >
+          <input
+            type="text"
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            className="inputText"
+          />
+          <input type="submit" value="作成" className="submitButton" />
+        </form>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              {todo.inputValue}
+              <input
+                type="text"
+                onChange={(e) => handleEdit(todo.id, e.target.value)}
+                className="inputText"
+                value={todo.inputValue}
+                disabled={todo.checked}
+              />
+              <input
+                type="checkbox"
+                onChange={(e) => handleChecked(todo.id, todo.checked)}
+              />
+              <button onClick={() => handleDelete(todo.id)}>削除</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default App;
