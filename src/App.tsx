@@ -4,24 +4,77 @@ import "./App.css";
 import { useState } from "react";
 
 function App() {
+  const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
 
   type Todo = {
-    inputvalue: string;
+    inputValue: string;
     id: number;
     checked: boolean;
   };
-  return (
-    <div className="App">
-      <div>
-        <h2>TODO</h2>
-        <form onSubmit={() => {}}>
-          <input type="text" onChange={() => {}} className="inputText" />
-          <input type="submit" value="作成" className="submitButton" />
-        </form>
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.value);
+    setInputValue(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    //新しいTODO
+    const newTodo: Todo = {
+      inputValue: inputValue,
+      id: todos.length,
+      checked: false,
+    };
+
+    setTodos([newTodo, ...todos]);
+    setInputValue("");
+
+    const handleEdit = (id: number, inputValue: string) => {
+      const newTodos = todos.map((todo) => {
+        if (todo.id === id) {
+          todo.inputValue = inputValue;
+        }
+        return todo;
+      });
+      setTodos(newTodos);
+    };
+    return (
+      <div className="App">
+        <div>
+          <h2>TODO</h2>
+          <form
+            onSubmit={(e) => {
+              handleSubmit(e);
+            }}
+          >
+            <input
+              type="text"
+              onChange={(e) => {
+                handleChange(e);
+              }}
+              className="inputText"
+            />
+            <input type="submit" value="作成" className="submitButton" />
+          </form>
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.id}>
+                {todo.inputValue}
+                <input
+                  type="text"
+                  onChange={(e) => handleEdit(todo.id, e.target.value)}
+                  className="inputText"
+                  value={todo.inputValue}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 }
 
 export default App;
